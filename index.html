@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>箸の名入れ | Name Picker</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#9a2219">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="箸の名入れ">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #eceee9;
+  --panel: #f8f9f6;
+  --ink: #1d2229;
+  --muted: #5a636f;
+  --line: #cdd2ca;
+  --accent: #9a2219;
+  --focus: #1f5fd1;
+  --sans: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --serif: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b; --panel: #1d2127; --ink: #e9e7e1; --muted: #9aa3ad;
+    --line: #343b43; --accent: #c63a2e; --focus: #7fb0ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171b; --panel: #1d2127; --ink: #e9e7e1; --muted: #9aa3ad;
+  --line: #343b43; --accent: #c63a2e; --focus: #7fb0ff;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+body.has-bar .page { padding-bottom: 120px; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.page { max-width: 720px; margin: 0 auto; padding: 24px 16px 40px; }
+
+header h1 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.1;
+  margin: 0 0 6px;
+  letter-spacing: 0.04em;
+}
+header .sub { margin: 0; color: var(--muted); }
+header .demo {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-left: 4px solid var(--accent);
+  background: var(--panel);
+  font-size: 14px;
+}
+
+.panel { margin-top: 24px; }
+.panel label { display: block; font-weight: 700; margin: 0 0 6px; }
+.panel input {
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 14px;
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 20px;
+}
+.panel .field + .field { margin-top: 20px; }
+.panel .label { display: block; font-weight: 700; margin: 0 0 8px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pair label { font-weight: 500; font-size: 14px; color: var(--muted); margin: 0 0 4px; }
+@media (max-width: 440px) { .pair { grid-template-columns: 1fr; } }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip {
+  min-height: 40px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  cursor: pointer;
+}
+.hint { margin: 8px 0 0; font-size: 13px; color: var(--muted); min-height: 20px; }
+
+.row-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.row-head h2 { font-size: 18px; margin: 0; }
+.link {
+  min-height: 44px;
+  padding: 0 4px;
+  background: none;
+  border: 0;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.link:disabled { color: var(--muted); text-decoration: none; cursor: default; }
+.empty { color: var(--muted); margin: 16px 0; }
+
+.slot {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.sound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  padding: 10px 4px;
+  background: var(--panel);
+  border-radius: 10px;
+}
+.sound .kana { font-family: var(--serif); font-weight: 700; font-size: 32px; line-height: 1.1; }
+.sound .rom { font-size: 14px; color: var(--muted); }
+.sound .note { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.2; margin-top: 4px; }
+.cands { display: flex; flex-wrap: wrap; gap: 8px; }
+.cand {
+  min-width: 76px;
+  min-height: 80px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.cand .k { font-family: var(--serif); font-weight: 700; font-size: 36px; line-height: 1.1; }
+.cand .m { font-size: 12px; line-height: 1.2; color: var(--muted); text-align: center; }
+.cand[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cand[aria-pressed="true"] .m { color: #fff; }
+
+.bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+.tiles { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; }
+.tile {
+  flex: none;
+  width: 42px; height: 50px;
+  display: grid; place-items: center;
+  border: 1.5px dashed var(--line);
+  border-radius: 8px;
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--muted);
+}
+.tile.on { border: 1.5px solid var(--accent); color: var(--ink); font-size: 28px; font-weight: 700; }
+.go {
+  flex: none;
+  min-height: 50px;
+  padding: 0 18px;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.go:disabled { background: var(--line); color: var(--muted); cursor: default; }
+.go.alt { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.go.alt:disabled { color: var(--muted); }
+.nametext { margin: 0 0 6px; font-family: var(--serif); font-weight: 700; font-size: 30px; line-height: 1.2; letter-spacing: 0.08em; user-select: all; -webkit-user-select: all; }
+
+/* Customer view */
+.overlay {
+  position: fixed; inset: 0; z-index: 10;
+  overflow-y: auto;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: #15181c;
+  color: #f0eee8;
+}
+.ov-top { display: flex; justify-content: space-between; align-items: center; max-width: 640px; margin: 0 auto; }
+.ov-top h2 { margin: 0; font-size: 16px; font-weight: 500; color: #b9bfc6; }
+.btn {
+  min-height: 44px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1.5px solid #6c747d;
+  border-radius: 10px;
+  color: #f0eee8;
+  cursor: pointer;
+}
+.ov-main { display: flex; gap: 28px; align-items: flex-start; justify-content: center; max-width: 640px; margin: 20px auto 0; }
+.chopstick {
+  position: relative;
+  flex: none;
+  width: 84px;
+  height: var(--h, 420px);
+  background: linear-gradient(90deg, #b58648, #e6c995 45%, #c39758);
+  clip-path: polygon(0 0, 100% 0, 62% 100%, 38% 100%);
+}
+.chopstick .name {
+  position: absolute;
+  top: 5%; left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: var(--fs, 36px);
+  line-height: 1.1;
+  color: #4a1712;
+  text-shadow: 0 1px 0 rgba(255,255,255,.3);
+}
+.details { flex: 1; min-width: 0; }
+.story { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
+.detail {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #343a41;
+}
+.detail .k { font-family: var(--serif); font-weight: 700; font-size: 38px; line-height: 1.1; text-align: center; }
+.detail .m { font-size: 18px; font-weight: 700; line-height: 1.2; }
+.detail .r { font-size: 14px; color: #b9bfc6; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.detail a { color: #f0b3ab; }
+.detail .dd { font-size: 14px; color: #d9dce0; margin: 2px 0 4px; }
+.cand .smp { font-style: italic; opacity: .7; }
+.splitbtn { margin-top: 6px; min-height: 32px; padding: 0 8px; font-size: 11px; background: transparent; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.ov-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>箸の名入れ</h1>
+    <p class="sub">Type the sound of the name, check the kana, then pick one kanji for each sound.</p>
+    <p class="demo">Kanji and meanings come from the shop's booklet. Meanings in plain English were translated from the booklet's Japanese notes.</p>
+  </header>
+
+  <section class="panel" aria-label="Name entry">
+    <div class="field">
+      <label for="name">1. Type the name as it sounds in Japanese</label>
+      <input id="name" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="maikeru, マイケル, まいける">
+      <div class="chips" id="chips"></div>
+      <p class="hint">Romaji, katakana or hiragana. Michael is "maikeru", not "michael".</p>
+    </div>
+    <div class="field">
+      <span class="label">2. Check the kana. You can edit either one.</span>
+      <div class="pair">
+        <div>
+          <label for="kata">Katakana</label>
+          <input id="kata" type="text" autocomplete="off" autocorrect="off" spellcheck="false" lang="ja">
+        </div>
+        <div>
+          <label for="hira">Hiragana</label>
+          <input id="hira" type="text" autocomplete="off" autocorrect="off" spellcheck="false" lang="ja">
+        </div>
+      </div>
+      <p class="hint" id="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="row-head">
+    <h2>3. Choose a kanji for each sound</h2>
+    <button type="button" class="link" id="rand">Fill the rest at random</button>
+  </div>
+  <p class="empty" id="empty">Type a name above. Each sound gets a few kanji to choose from.</p>
+  <div id="slots"></div>
+</main>
+
+<div class="bar" id="bar" hidden>
+  <div class="tiles" id="tiles" lang="ja"></div>
+  <button type="button" class="go alt" id="copybar" disabled>Copy</button>
+  <button type="button" class="go" id="show" disabled>Show to customer</button>
+</div>
+
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-label="Customer view" hidden>
+  <div class="ov-top">
+    <h2>Customer view</h2>
+    <button type="button" class="btn" id="close">Close</button>
+  </div>
+  <div class="ov-main">
+    <div class="chopstick" aria-hidden="true"><div class="name" id="cs-name" lang="ja"></div></div>
+    <div class="details">
+      <p class="nametext" id="nametext" lang="ja"></p>
+      <p class="story" id="story"></p>
+      <div id="detail"></div>
+      <div class="ov-actions">
+        <button type="button" class="btn" id="copy">Copy name</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- The shop's own booklet. Keys are readings of one or more kana. ----
+  // Entries with a description come straight from the booklet's English text.
+  var REAL = {
+    "あ": [
+      { k: "亜", m: "Next / Asia", d: "Symbolizes the vastness and potential of the Asian continent." },
+      { k: "有", m: "Exist / Possess", d: "Represents having great talent and a meaningful existence." },
+      { k: "逢", m: "Encounter", d: "To meet someone special; suggests a destiny-changing meeting." },
+      { k: "吾", m: "Self / Ego", d: "To know oneself and stand firm in one's own identity." },
+      { k: "阿", m: "Flatter / High ground", d: "Originally meant \"a beautiful slope\"; implies a high perspective." }
+    ],
+    "あい": [
+      { k: "愛", m: "Love / Affection", d: "The most popular kanji for pure love and a caring heart." },
+      { k: "藍", m: "Indigo / Deep Blue", d: "Represents Japan's traditional color and \"ever-growing\" beauty." },
+      { k: "相", m: "Together / Mutual", d: "To live in harmony and support each other through life." }
+    ],
+    "せ": [
+      { k: "世", m: "Leave a mark on the world and history" },
+      { k: "成", m: "Success / Become", d: "To accomplish great things and make your dreams come true." },
+      { k: "誠", m: "Sincerity / Truth", d: "To be honest, faithful, and live with a sincere heart." }
+    ],
+    "ぜ": [
+      { k: "是", m: "Correct / Right", d: "To always seek the truth and stand by what is right." },
+      { k: "善", m: "Good / Virtue", d: "To live a life of high moral standards and kindness." }
+    ],
+    "せい": [
+      { k: "星", m: "Star / Hope", d: "To be a guiding star that brings light to others in the dark." },
+      { k: "聖", m: "Holy / Pure", d: "Represents a noble, sacred, and spiritually high character." },
+      { k: "静", m: "Calm / Quiet", d: "To possess a peaceful mind and remain calm in any situation." },
+      { k: "清", m: "Pure / Clean", d: "Represents a heart that is clean, honest, and transparent." }
+    ],
+    "い": [
+      { k: "依", m: "Rely / Trust", d: "To be a dependable person who is cherished by many." },
+      { k: "唯", m: "Only one" },
+      { k: "衣", m: "Elegance, wrapped in kindness" },
+      { k: "維", m: "Keeps bonds together" },
+      { k: "意", m: "Strong will" }
+    ]
+  };
+  var RAW = [
+    "う|羽:Freedom / flight;佑:Helping others;宇宙:Cosmos, infinite possibility (2 kanji);海:Broad heart (read \"umi\")",
+    "え|恵:Wisdom and blessing;瑛:Crystal, pure soul;絵:Colorful life;栄:Success / prosperity",
+    "えい|英:Excellent / brave;詠:Artistic heart;永:Eternal / lasting happiness;鋭:Sharp mind",
+    "お|桜:New beginnings;央:Center, one who unites people;緒:Start of a story / thread of fate;音:Resonating with others",
+    "か|華:Splendid life;嘉:Auspicious / good fortune;花:Natural beauty and kindness;夏:Passion and brightness;歌:Bringing the music of joy",
+    "が|雅:Refined elegance;賀:Celebration / blessing",
+    "かい|海:Broad heart, courage for the unknown;快:Refreshing, brightens others;開:Opens a new door;魁:Pioneer",
+    "き|輝:Shine like a star;希:Bringer of hope;樹:Strength and steady growth;貴:Noble heart;季:Harmony with nature",
+    "ぎ|義:Justice / sincerity;銀:Steady silver shine",
+    "く|久:Long life, firm foundation;玖:Black gem, mysterious charm;駆:Run toward goals",
+    "ぐ|弘:Broad heart, big ambition;具:Power to achieve goals",
+    "け|恵:Blessings of nature and universe;佳:Refined beauty;景:Grand view, bright future",
+    "げ|玄:Deep wisdom, quiet strength;元気:Healthy and positive (2 kanji)",
+    "けい|慶:Life full of joy;啓:Finds wisdom, guides others;圭:Polished character, sharp mind",
+    "こ|心:Caring person;琥:Amber: ancient wisdom, warmth;湖:Calm, deep heart;虎:Courage and power",
+    "ご|悟:Understands the truth;剛:Unbreakable strength",
+    "さ|彩:Colorful life;咲:Bloom / smile;紗:Delicate silk, elegance;佐:Supporter",
+    "ざ|座:A comforting place where people gather;財:Valuable person, brings prosperity",
+    "し|至:Reach the highest goal;志:Strong will;詩:Expresses the world's beauty;史:A memorable life",
+    "じ|慈:Deep kindness;治:Order and peace;路:Walk your own path (read \"ji\")",
+    "しん|真:Sincere, straightforward;信:Trusted person;進:Keep moving forward;新:New viewpoint, adventure",
+    "す|寿:Long life / happiness;翠:Kingfisher, emerald green;澄:Heart clear as mountain water",
+    "ず|図:Design the future;瑞:Auspicious, refreshing heart",
+    "せ|世:Leave a mark on the world and history",
+    "そ|爽:Refreshing / pure;想:Thoughts, imagining the future;奏:Play, harmony;礎:Foundation",
+    "ぞ|創造:Create from nothing (2 kanji);蔵:Store knowledge and treasure",
+    "た|多:Abundant possibilities;汰:Selecting the best;太:Generous and strong;瑞:Auspicious, pure beginning",
+    "だ|大地:Vast, stable earth (2 kanji);暖:Warmth (read \"dan\")",
+    "だい|大:Great;台:Foundation that supports society;第:Order, step by step;泰:Calm and secure",
+    "ち|智:Deep wisdom;知:Keep learning;千:Endless dreams and success;地:Earth / foundation",
+    "ぢ|路:Path of life (old reading);持:Hold on to dreams and values",
+    "つ|都:Elegant metropolis;通:Smooth flow;紬:Pongee silk: strength and texture;月:Moon",
+    "づ|絆:Bond;続:Perseverance",
+    "て|天:Gift from heaven;照:Illuminate;帝:Dignity, leadership;輝:Shine",
+    "で|出:Setting out;伝:Passing down stories",
+    "でい|泥:Lotus in the mud: hidden potential;寧:Calm;出意:Bring your intention into the world (2 kanji)",
+    "と|翔:Soar toward high goals;斗:Big Dipper, guiding star;登:Climb / improve;永久:Eternity (2 kanji, \"towa\")",
+    "ど|道:Master a path;努:Effort;土:Source of life",
+    "な|那:Graceful, classic;奈:Leads to abundance and peace;凪:Calm / peace;菜:Vitality, freshness",
+    "に|仁:Compassion;虹:Bridge between people, hope;日:Sun, new strength;二:Close together, a pair",
+    "ぬ|温:Gentle warmth;主:Master of one's own fate;布:Spreads kindness",
+    "ね|音:Harmony, resonance;寧:Calm, stable life;嶺:Mountain peak goal;根:Unshakable foundation",
+    "の|乃:Classical connector;望:Hope / dreams;暖:Warmth;野:Freedom, wide possibilities",
+    "は|陽:Light and warmth;波:Ride the flow, influence;葉:Vitality;羽:Lightness",
+    "ば|場:Center of the place;万:All / vast",
+    "ぱ|晴:Clear, bright happiness;波:Energetic wave",
+    "ひ|飛:Overcome obstacles freely;緋:Passion, crimson;日:New radiance every day;灯:Guiding light in hard times",
+    "び|美:Beauty everyone admires;備:Always dependable and prepared",
+    "ぴ|光:Flash of inspiration;灯:Small, focused light",
+    "ふ|楓:Autumn beauty, refined heart;風:Free like the wind;譜:Life in harmony like a melody;芙:Lotus, beautiful even in mud",
+    "ぶ|武:Strength;舞:Dance",
+    "ぷ|純:Pure;風:Gentle breeze",
+    "へ|平:Peace;碧:Blue-green;経:Path, experience;兵:Soldier",
+    "べ|紅:Deep red;勉:Diligence",
+    "ぺ|平:Calm;並:Together",
+    "ほ|帆:Sail, voyage;宝:Treasure;穂:Harvest;歩:Progress",
+    "ぼ|望:Expectation;母:Source",
+    "ぽ|歩:A step forward;穂:Sprouting",
+    "ま|真:Truth;舞:Graceful dance;万:Infinite possibilities;満:Fullness",
+    "み|美:Beauty;海:Vastness;実:Fruitfulness;光:Light",
+    "む|夢:Dream;武:Strength;睦:Close, friendly;無限:Limitless (2 kanji)",
+    "め|芽:Growth;明:Bright;恵:Blessing;愛:Beloved",
+    "も|望:Hope;萌:Budding;茂:Prosperity;模:Model",
+    "や|弥:Ever more widely;陽:Sun;也:Archaic connector;八:Widening prosperity",
+    "ゆ|結:Bond;勇:Courage;悠:Leisurely;友:Friendship",
+    "よ|誉:Honor;陽:Bright sun;代:Generation;洋:Ocean, the world",
+    "ら|楽:Joy;蘭:Orchid, elegance;良:Goodness;羅:Wide network",
+    "り|凜:Dignified;莉:Jasmine;里:Hometown;理:Logic",
+    "る|瑠:Lapis lazuli;流:Flow;類:One of a kind;留:Stays in the heart",
+    "れ|礼:Courtesy;蓮:Pure lotus;怜:Wise;麗:Splendid",
+    "ろ|路:Road;露:Morning dew;朗:Cheerful;呂:Rhythm",
+    "わ|和:Harmony;輪:Circle;羽:Wing;若:Youthful",
+    "ん|運:Good fortune;恩:Gratitude;音:Resonance",
+  ];
+  var DATA = {};
+  Object.keys(REAL).forEach(function (key) { DATA[key] = REAL[key]; });
+  RAW.forEach(function (line) {
+    var sp = line.indexOf("|");
+    DATA[line.slice(0, sp)] = line.slice(sp + 1).split(";").map(function (x) {
+      var p = x.split(":");
+      return { k: p[0], m: p.slice(1).join(":") };
+    });
+  });
+  function romOf(kana) {
+    return Array.from(kana).map(function (c) { return REV[c] || ""; }).join("");
+  }
+  // Find the kanji set for a reading: its own set if the booklet has one,
+  // otherwise the plain (unvoiced) set. "wo" falls back to "o".
+  function baseOf(kana) {
+    if (DATA[kana]) return kana;
+    var m = Array.from(kana).map(function (c) {
+      return DATA[c] ? c : (c === "を" ? "お" : (VOICED[c] || c));
+    }).join("");
+    return m;
+  }
+
+  // Voiced / semi-voiced sounds reuse the kanji set of the plain sound
+  var VOICED = {};
+  var vs = "がかぎきぐくげけごこざさじしずすぜせぞそだたぢちづつでてどとばはびひぶふべへぼほぱはぴひぷふぺへぽほゔう";
+  for (var v = 0; v < vs.length; v += 2) VOICED[vs[v]] = vs[v + 1];
+  var SMALL = { "ゃ": "や", "ゅ": "ゆ", "ょ": "よ", "ぁ": "あ", "ぃ": "い", "ぅ": "う", "ぇ": "え", "ぉ": "お", "ゎ": "わ" };
+
+  // ---- Romaji to kana ----
+  var TBL = ("a あ i い u う e え o お ka か ki き ku く ke け ko こ sa さ shi し si し su す se せ so そ " +
+    "ta た chi ち ti ち tsu つ tu つ te て to と na な ni に nu ぬ ne ね no の ha は hi ひ fu ふ hu ふ he へ ho ほ " +
+    "ma ま mi み mu む me め mo も ya や yu ゆ yo よ ra ら ri り ru る re れ ro ろ wa わ wo を " +
+    "ga が gi ぎ gu ぐ ge げ go ご za ざ ji じ zi じ zu ず ze ぜ zo ぞ da だ di ぢ du づ de で do ど " +
+    "ba ば bi び bu ぶ be べ bo ぼ pa ぱ pi ぴ pu ぷ pe ぺ po ぽ " +
+    "kya きゃ kyu きゅ kyo きょ sha しゃ shu しゅ sho しょ she しぇ sya しゃ syu しゅ syo しょ " +
+    "cha ちゃ chu ちゅ cho ちょ che ちぇ tya ちゃ tyu ちゅ tyo ちょ nya にゃ nyu にゅ nyo にょ " +
+    "hya ひゃ hyu ひゅ hyo ひょ mya みゃ myu みゅ myo みょ rya りゃ ryu りゅ ryo りょ " +
+    "gya ぎゃ gyu ぎゅ gyo ぎょ ja じゃ ju じゅ jo じょ je じぇ jya じゃ jyu じゅ jyo じょ " +
+    "bya びゃ byu びゅ byo びょ pya ぴゃ pyu ぴゅ pyo ぴょ fa ふぁ fi ふぃ fe ふぇ fo ふぉ va ゔぁ").split(" ");
+  var T = {}, REV = { "ん": "n" };
+  for (var t = 0; t < TBL.length; t += 2) {
+    T[TBL[t]] = TBL[t + 1];
+    if (TBL[t + 1].length === 1 && !(TBL[t + 1] in REV)) REV[TBL[t + 1]] = TBL[t];
+  }
+  var LONE = { k: "く", s: "す", t: "と", d: "ど", h: "ふ", m: "む", r: "る", w: "う", y: "い", g: "ぐ", z: "ず", b: "ぶ", p: "ぷ", f: "ふ", j: "じ", c: "く", v: "ぶ", x: "く", q: "く" };
+  var LONE2 = { ch: "ち", sh: "し", th: "す" };
+
+  function parse(input) {
+    var s = input.normalize("NFC").toLowerCase()
+      .replace(/ā/g, "aa").replace(/ī/g, "ii").replace(/ū/g, "uu").replace(/ē/g, "ee").replace(/ō/g, "ou")
+      .replace(/l/g, "r");
+    var out = [], skipped = [], text = "";
+    function note(c) { if (skipped.indexOf(c) < 0) skipped.push(c); }
+    function emit(str) {
+      Array.from(str).forEach(function (c) {
+        if (c === "っ") { note("っ"); return; }
+        var big = SMALL[c] || c;
+        var base = baseOf(big);
+        if (DATA[base]) { out.push(big); text += c; } else note(c);
+      });
+    }
+    function isVowel(ch) { return !!ch && "aiueo".indexOf(ch) >= 0; }
+    var i = 0;
+    while (i < s.length) {
+      var c = s[i], code = c.charCodeAt(0);
+      if (code >= 0x30A1 && code <= 0x30F6) { emit(String.fromCharCode(code - 0x60)); i++; continue; }
+      if (code >= 0x3041 && code <= 0x3096) { emit(c); i++; continue; }
+      if (!/[a-z]/.test(c)) {
+        if (!/[\s'’\-.,]/.test(c)) note(c);
+        i++; continue;
+      }
+      if (s[i + 1] === c && !isVowel(c) && c !== "n") { note("っ"); i++; continue; }
+      var hit = null;
+      for (var len = 3; len >= 1; len--) {
+        var chunk = s.substr(i, len);
+        if (chunk.length === len && T[chunk]) { hit = [chunk, len]; break; }
+      }
+      if (hit) { emit(T[hit[0]]); i += hit[1]; continue; }
+      if (c === "n") { emit("ん"); i++; if (s[i] === "'" || s[i] === "’") i++; continue; }
+      var two = s.substr(i, 2);
+      if (LONE2[two]) { emit(LONE2[two]); i += 2; continue; }
+      if (LONE[c]) { emit(LONE[c]); i++; continue; }
+      note(c); i++;
+    }
+    return { slots: out, skipped: skipped, text: text };
+  }
+
+  // ---- State and rendering ----
+  var $ = function (id) { return document.getElementById(id); };
+  var slots = [], sel = [];
+
+  var lastArr = [], splits = {};
+
+  // Group sounds into slots. A multi-sound reading from the booklet (like あい)
+  // becomes one slot, unless the person chose to split it.
+  function setSlots(arr) {
+    lastArr = arr;
+    var prev = slots, prevSel = sel, next = [], i = 0;
+    while (i < arr.length) {
+      var made = false;
+      for (var len = Math.min(3, arr.length - i); len >= 2; len--) {
+        var kana = arr.slice(i, i + len).join("");
+        if (DATA[baseOf(kana)] && !splits[i + ":" + kana]) {
+          next.push({ kana: kana, base: baseOf(kana), at: i }); i += len; made = true; break;
+        }
+      }
+      if (!made) { next.push({ kana: arr[i], base: baseOf(arr[i]), at: i }); i++; }
+    }
+    slots = next;
+    sel = next.map(function (s, n) { return prev[n] && prev[n].kana === s.kana ? prevSel[n] : null; });
+    renderSlots();
+    updateBar();
+  }
+
+  function renderSlots() {
+    var box = $("slots");
+    box.textContent = "";
+    $("empty").hidden = slots.length > 0;
+    slots.forEach(function (s, i) {
+      var sec = document.createElement("section");
+      sec.className = "slot";
+      var snd = document.createElement("div");
+      snd.className = "sound";
+      snd.innerHTML = '<span class="kana" lang="ja">' + s.kana + '</span><span class="rom">' + romOf(s.kana) + "</span>";
+      if (s.base !== s.kana) {
+        var n = document.createElement("span");
+        n.className = "note";
+        n.textContent = "uses the " + s.base + " set";
+        snd.appendChild(n);
+      }
+      if (Array.from(s.kana).length > 1) {
+        var sp = document.createElement("button");
+        sp.type = "button";
+        sp.className = "splitbtn";
+        sp.textContent = "Split " + Array.from(s.kana).join(" + ");
+        sp.addEventListener("click", function () {
+          splits[s.at + ":" + s.kana] = true;
+          setSlots(lastArr);
+        });
+        snd.appendChild(sp);
+      }
+      var grp = document.createElement("div");
+      grp.className = "cands";
+      grp.setAttribute("role", "group");
+      grp.setAttribute("aria-label", "Kanji for " + (romOf(s.kana) || s.kana));
+      DATA[s.base].forEach(function (c, j) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "cand";
+        b.setAttribute("aria-pressed", String(sel[i] === j));
+        if (c.d) b.title = c.d;
+        b.innerHTML = '<span class="k" lang="ja">' + c.k + '</span><span class="m">' + c.m + "</span>" +
+          (c.s ? '<span class="m smp">sample</span>' : "");
+        b.addEventListener("click", function () {
+          sel[i] = sel[i] === j ? null : j;
+          Array.prototype.forEach.call(grp.children, function (x, n2) { x.setAttribute("aria-pressed", String(sel[i] === n2)); });
+          updateBar();
+        });
+        grp.appendChild(b);
+      });
+      sec.appendChild(snd);
+      sec.appendChild(grp);
+      box.appendChild(sec);
+    });
+  }
+
+  function updateBar() {
+    var has = slots.length > 0;
+    $("bar").hidden = !has;
+    document.body.classList.toggle("has-bar", has);
+    var tiles = $("tiles");
+    tiles.textContent = "";
+    var count = 0;
+    slots.forEach(function (s, i) {
+      var d = document.createElement("span");
+      var on = sel[i] != null;
+      if (on) count++;
+      d.className = "tile" + (on ? " on" : "");
+      d.textContent = on ? DATA[s.base][sel[i]].k : s.kana;
+      tiles.appendChild(d);
+    });
+    var done = has && count === slots.length;
+    $("show").disabled = !done;
+    $("show").textContent = done ? "Show to customer" : count + " of " + slots.length + " chosen";
+    $("rand").disabled = !has || done;
+    $("copybar").disabled = !done;
+  }
+
+  function toKata(str) {
+    return Array.from(str).map(function (c) {
+      var n = c.charCodeAt(0);
+      return n >= 0x3041 && n <= 0x3096 ? String.fromCharCode(n + 0x60) : c;
+    }).join("");
+  }
+  // Update the other fields and the kanji rows from a parsed reading.
+  // `keep` is the field being typed in, which is left as the person typed it.
+  function fill(r, keep) {
+    if (keep !== "hira") $("hira").value = r.text;
+    if (keep !== "kata") $("kata").value = toKata(r.text);
+    showStatus(r.skipped, r.text);
+    setSlots(r.slots);
+  }
+  function onName() { fill(parse($("name").value), null); }
+  function onHira() { fill(parse($("hira").value), "hira"); }
+  function onKata() { fill(parse($("kata").value), "kata"); }
+  function showStatus(skipped, text) {
+    $("status").textContent = skipped.length
+      ? "Skipped, no kanji set for: " + skipped.join(" ")
+      : (text ? "Converted automatically. Edit either field if a sound is wrong." : "");
+  }
+  // When leaving a kana field, tidy both fields into the right script.
+  // This does not redraw the kanji rows, so a tap on a kanji is never lost.
+  function tidy(id) {
+    var r = parse($(id).value);
+    $("hira").value = r.text;
+    $("kata").value = toKata(r.text);
+  }
+  function bind(id, fn) {
+    var el = $(id);
+    el.addEventListener("input", function (e) { if (!e.isComposing) fn(); });
+    el.addEventListener("compositionend", fn);
+  }
+  bind("name", onName);
+  bind("hira", onHira);
+  bind("kata", onKata);
+  $("hira").addEventListener("change", function () { tidy("hira"); });
+  $("kata").addEventListener("change", function () { tidy("kata"); });
+
+  [["Emma", "ema"], ["Michael", "maikeru"], ["Chris", "kurisu"], ["Sakura", "sakura"]].forEach(function (p) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = p[0] + " → " + p[1];
+    b.addEventListener("click", function () { $("name").value = p[1]; onName(); });
+    $("chips").appendChild(b);
+  });
+
+  $("rand").addEventListener("click", function () {
+    slots.forEach(function (s, i) {
+      if (sel[i] == null) sel[i] = Math.floor(Math.random() * DATA[s.base].length);
+    });
+    renderSlots();
+    updateBar();
+  });
+
+  // ---- Customer view ----
+  var lastFocus = null;
+  function openOv() {
+    var H = Math.round(Math.min(540, Math.max(320, window.innerHeight * 0.62)));
+    var n = slots.length;
+    var fs = Math.max(18, Math.min(40, Math.floor(H * 0.76 / n / 1.1)));
+    var ov = $("ov");
+    ov.style.setProperty("--h", H + "px");
+    ov.style.setProperty("--fs", fs + "px");
+    var chosen = slots.map(function (s, i) {
+      var c = DATA[s.base][sel[i]];
+      return { kana: s.kana, k: c.k, m: c.m, d: c.d || "" };
+    });
+    var name = chosen.map(function (c) { return c.k; }).join("");
+    $("cs-name").textContent = name;
+    $("nametext").textContent = name;
+    $("story").textContent = chosen.map(function (c) { return c.m; }).join(", ");
+    var d = $("detail");
+    d.textContent = "";
+    chosen.forEach(function (c) {
+      var row = document.createElement("div");
+      row.className = "detail";
+      var href = "https://jisho.org/search/" + encodeURIComponent(c.k + " #kanji");
+      row.innerHTML = '<div class="k" lang="ja">' + c.k + '</div><div><div class="m">' + c.m +
+        '</div>' + (c.d ? '<div class="dd">' + c.d + "</div>" : "") + '<div class="r"><span lang="ja">' + c.kana + " " + romOf(c.kana) +
+        '</span><a href="' + href + '" target="_blank" rel="noopener">Stroke order</a></div></div>';
+      d.appendChild(row);
+    });
+    $("copy").textContent = "Copy name";
+    lastFocus = document.activeElement;
+    ov.hidden = false;
+    document.body.style.overflow = "hidden";
+    $("close").focus();
+  }
+  function closeOv() {
+    $("ov").hidden = true;
+    document.body.style.overflow = "";
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  $("show").addEventListener("click", openOv);
+  $("close").addEventListener("click", closeOv);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !$("ov").hidden) closeOv();
+  });
+  function currentName() {
+    return slots.map(function (s, i) { return sel[i] != null ? DATA[s.base][sel[i]].k : ""; }).join("");
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px";
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function copyText(text, btn, label) {
+    var good = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = label; }, 1600); };
+    var bad = function () { btn.textContent = "Select the name and copy"; };
+    if (fallbackCopy(text)) { good(); return; }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(good, bad);
+        return;
+      }
+    } catch (err) { /* fall through */ }
+    bad();
+  }
+  $("copy").addEventListener("click", function () { copyText(currentName(), $("copy"), "Copy name"); });
+  $("copybar").addEventListener("click", function () { copyText(currentName(), $("copybar"), "Copy"); });
+
+  $("name").value = "maikeru";
+  onName();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    try { navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
+  });
+}
+</script>
+</body>
+</html>
