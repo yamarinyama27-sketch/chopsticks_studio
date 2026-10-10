@@ -702,10 +702,9 @@ header .demo {
     chosen.forEach(function (c) {
       var row = document.createElement("div");
       row.className = "detail";
-      var href = "https://jisho.org/search/" + encodeURIComponent(c.k + " #kanji");
       row.innerHTML = '<div class="k" lang="ja">' + c.k + '</div><div><div class="m">' + c.m +
         '</div>' + (c.d ? '<div class="dd">' + c.d + "</div>" : "") + '<div class="r"><span lang="ja">' + c.kana + " " + romOf(c.kana) +
-        '</span><a href="' + href + '" target="_blank" rel="noopener">Stroke order</a></div></div>';
+        '</span></div></div>';
       d.appendChild(row);
     });
     $("copy").textContent = "Copy name";
