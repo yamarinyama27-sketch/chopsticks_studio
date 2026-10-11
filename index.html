@@ -116,7 +116,7 @@ header .demo {
 
 .slot {
   display: grid;
-  grid-template-columns: 72px 1fr;
+  grid-template-columns: 92px 1fr;
   gap: 12px;
   padding: 14px 0;
   border-top: 1px solid var(--line);
@@ -133,23 +133,23 @@ header .demo {
 .sound .kana { font-family: var(--serif); font-weight: 700; font-size: 32px; line-height: 1.1; }
 .sound .rom { font-size: 14px; color: var(--muted); }
 .sound .note { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.2; margin-top: 4px; }
-.cands { display: flex; flex-wrap: wrap; gap: 8px; }
+.cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; align-content: start; }
 .cand {
-  min-width: 76px;
-  min-height: 80px;
-  padding: 8px 10px;
+  min-height: 68px;
+  padding: 8px 14px 8px 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
+  justify-content: flex-start;
+  gap: 14px;
+  text-align: left;
   background: var(--panel);
   border: 1.5px solid var(--line);
   border-radius: 10px;
   cursor: pointer;
 }
-.cand .k { font-family: var(--serif); font-weight: 700; font-size: 36px; line-height: 1.1; }
-.cand .m { font-size: 12px; line-height: 1.2; color: var(--muted); text-align: center; }
+.cand .k { flex: none; width: 48px; text-align: center; font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 1.1; }
+.cand .m { font-size: 17px; font-weight: 700; line-height: 1.25; color: var(--ink); text-align: left; }
 .cand[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 .cand[aria-pressed="true"] .m { color: #fff; }
 
@@ -237,18 +237,18 @@ header .demo {
 .story { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
 .detail {
   display: grid;
-  grid-template-columns: 52px 1fr;
-  gap: 12px;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
   align-items: center;
-  padding: 10px 0;
+  padding: 12px 0;
   border-top: 1px solid #343a41;
 }
-.detail .k { font-family: var(--serif); font-weight: 700; font-size: 38px; line-height: 1.1; text-align: center; }
-.detail .m { font-size: 18px; font-weight: 700; line-height: 1.2; }
+.detail .k { font-family: var(--serif); font-weight: 700; font-size: 54px; line-height: 1.1; text-align: center; }
+.detail .m { font-size: 24px; font-weight: 700; line-height: 1.25; }
 .detail .r { font-size: 14px; color: #b9bfc6; display: flex; flex-wrap: wrap; gap: 4px 14px; }
 .detail a { color: #f0b3ab; }
 .detail .dd { font-size: 14px; color: #d9dce0; margin: 2px 0 4px; }
-.cand .smp { font-style: italic; opacity: .7; }
+.sound .pg { font-size: 18px; line-height: 1.2; color: var(--muted); margin-top: 3px; font-weight: 600; white-space: nowrap; }
 .splitbtn { margin-top: 6px; min-height: 32px; padding: 0 8px; font-size: 11px; background: transparent; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
 .ov-actions { display: flex; gap: 10px; margin-top: 16px; }
 
@@ -324,116 +324,86 @@ header .demo {
 
   // ---- The shop's own booklet. Keys are readings of one or more kana. ----
   // Entries with a description come straight from the booklet's English text.
-  var REAL = {
-    "あ": [
-      { k: "亜", m: "Next / Asia", d: "Symbolizes the vastness and potential of the Asian continent." },
-      { k: "有", m: "Exist / Possess", d: "Represents having great talent and a meaningful existence." },
-      { k: "逢", m: "Encounter", d: "To meet someone special; suggests a destiny-changing meeting." },
-      { k: "吾", m: "Self / Ego", d: "To know oneself and stand firm in one's own identity." },
-      { k: "阿", m: "Flatter / High ground", d: "Originally meant \"a beautiful slope\"; implies a high perspective." }
-    ],
-    "あい": [
-      { k: "愛", m: "Love / Affection", d: "The most popular kanji for pure love and a caring heart." },
-      { k: "藍", m: "Indigo / Deep Blue", d: "Represents Japan's traditional color and \"ever-growing\" beauty." },
-      { k: "相", m: "Together / Mutual", d: "To live in harmony and support each other through life." }
-    ],
-    "せ": [
-      { k: "世", m: "Leave a mark on the world and history" },
-      { k: "成", m: "Success / Become", d: "To accomplish great things and make your dreams come true." },
-      { k: "誠", m: "Sincerity / Truth", d: "To be honest, faithful, and live with a sincere heart." }
-    ],
-    "ぜ": [
-      { k: "是", m: "Correct / Right", d: "To always seek the truth and stand by what is right." },
-      { k: "善", m: "Good / Virtue", d: "To live a life of high moral standards and kindness." }
-    ],
-    "せい": [
-      { k: "星", m: "Star / Hope", d: "To be a guiding star that brings light to others in the dark." },
-      { k: "聖", m: "Holy / Pure", d: "Represents a noble, sacred, and spiritually high character." },
-      { k: "静", m: "Calm / Quiet", d: "To possess a peaceful mind and remain calm in any situation." },
-      { k: "清", m: "Pure / Clean", d: "Represents a heart that is clean, honest, and transparent." }
-    ],
-    "い": [
-      { k: "依", m: "Rely / Trust", d: "To be a dependable person who is cherished by many." },
-      { k: "唯", m: "Only one" },
-      { k: "衣", m: "Elegance, wrapped in kindness" },
-      { k: "維", m: "Keeps bonds together" },
-      { k: "意", m: "Strong will" }
-    ]
-  };
+  var REAL = {};
   var RAW = [
-    "う|羽:Freedom / flight;佑:Helping others;宇宙:Cosmos, infinite possibility (2 kanji);海:Broad heart (read \"umi\")",
-    "え|恵:Wisdom and blessing;瑛:Crystal, pure soul;絵:Colorful life;栄:Success / prosperity",
-    "えい|英:Excellent / brave;詠:Artistic heart;永:Eternal / lasting happiness;鋭:Sharp mind",
-    "お|桜:New beginnings;央:Center, one who unites people;緒:Start of a story / thread of fate;音:Resonating with others",
-    "か|華:Splendid life;嘉:Auspicious / good fortune;花:Natural beauty and kindness;夏:Passion and brightness;歌:Bringing the music of joy",
-    "が|雅:Refined elegance;賀:Celebration / blessing",
-    "かい|海:Broad heart, courage for the unknown;快:Refreshing, brightens others;開:Opens a new door;魁:Pioneer",
-    "き|輝:Shine like a star;希:Bringer of hope;樹:Strength and steady growth;貴:Noble heart;季:Harmony with nature",
-    "ぎ|義:Justice / sincerity;銀:Steady silver shine",
-    "く|久:Long life, firm foundation;玖:Black gem, mysterious charm;駆:Run toward goals",
-    "ぐ|弘:Broad heart, big ambition;具:Power to achieve goals",
-    "け|恵:Blessings of nature and universe;佳:Refined beauty;景:Grand view, bright future",
-    "げ|玄:Deep wisdom, quiet strength;元気:Healthy and positive (2 kanji)",
-    "けい|慶:Life full of joy;啓:Finds wisdom, guides others;圭:Polished character, sharp mind",
-    "こ|心:Caring person;琥:Amber: ancient wisdom, warmth;湖:Calm, deep heart;虎:Courage and power",
-    "ご|悟:Understands the truth;剛:Unbreakable strength",
-    "さ|彩:Colorful life;咲:Bloom / smile;紗:Delicate silk, elegance;佐:Supporter",
-    "ざ|座:A comforting place where people gather;財:Valuable person, brings prosperity",
-    "し|至:Reach the highest goal;志:Strong will;詩:Expresses the world's beauty;史:A memorable life",
-    "じ|慈:Deep kindness;治:Order and peace;路:Walk your own path (read \"ji\")",
-    "しん|真:Sincere, straightforward;信:Trusted person;進:Keep moving forward;新:New viewpoint, adventure",
-    "す|寿:Long life / happiness;翠:Kingfisher, emerald green;澄:Heart clear as mountain water",
-    "ず|図:Design the future;瑞:Auspicious, refreshing heart",
-    "せ|世:Leave a mark on the world and history",
-    "そ|爽:Refreshing / pure;想:Thoughts, imagining the future;奏:Play, harmony;礎:Foundation",
-    "ぞ|創造:Create from nothing (2 kanji);蔵:Store knowledge and treasure",
-    "た|多:Abundant possibilities;汰:Selecting the best;太:Generous and strong;瑞:Auspicious, pure beginning",
-    "だ|大地:Vast, stable earth (2 kanji);暖:Warmth (read \"dan\")",
-    "だい|大:Great;台:Foundation that supports society;第:Order, step by step;泰:Calm and secure",
-    "ち|智:Deep wisdom;知:Keep learning;千:Endless dreams and success;地:Earth / foundation",
-    "ぢ|路:Path of life (old reading);持:Hold on to dreams and values",
-    "つ|都:Elegant metropolis;通:Smooth flow;紬:Pongee silk: strength and texture;月:Moon",
-    "づ|絆:Bond;続:Perseverance",
-    "て|天:Gift from heaven;照:Illuminate;帝:Dignity, leadership;輝:Shine",
-    "で|出:Setting out;伝:Passing down stories",
-    "でい|泥:Lotus in the mud: hidden potential;寧:Calm;出意:Bring your intention into the world (2 kanji)",
-    "と|翔:Soar toward high goals;斗:Big Dipper, guiding star;登:Climb / improve;永久:Eternity (2 kanji, \"towa\")",
-    "ど|道:Master a path;努:Effort;土:Source of life",
-    "な|那:Graceful, classic;奈:Leads to abundance and peace;凪:Calm / peace;菜:Vitality, freshness",
-    "に|仁:Compassion;虹:Bridge between people, hope;日:Sun, new strength;二:Close together, a pair",
-    "ぬ|温:Gentle warmth;主:Master of one's own fate;布:Spreads kindness",
-    "ね|音:Harmony, resonance;寧:Calm, stable life;嶺:Mountain peak goal;根:Unshakable foundation",
-    "の|乃:Classical connector;望:Hope / dreams;暖:Warmth;野:Freedom, wide possibilities",
-    "は|陽:Light and warmth;波:Ride the flow, influence;葉:Vitality;羽:Lightness",
-    "ば|場:Center of the place;万:All / vast",
-    "ぱ|晴:Clear, bright happiness;波:Energetic wave",
-    "ひ|飛:Overcome obstacles freely;緋:Passion, crimson;日:New radiance every day;灯:Guiding light in hard times",
-    "び|美:Beauty everyone admires;備:Always dependable and prepared",
-    "ぴ|光:Flash of inspiration;灯:Small, focused light",
-    "ふ|楓:Autumn beauty, refined heart;風:Free like the wind;譜:Life in harmony like a melody;芙:Lotus, beautiful even in mud",
-    "ぶ|武:Strength;舞:Dance",
-    "ぷ|純:Pure;風:Gentle breeze",
-    "へ|平:Peace;碧:Blue-green;経:Path, experience;兵:Soldier",
-    "べ|紅:Deep red;勉:Diligence",
-    "ぺ|平:Calm;並:Together",
-    "ほ|帆:Sail, voyage;宝:Treasure;穂:Harvest;歩:Progress",
-    "ぼ|望:Expectation;母:Source",
-    "ぽ|歩:A step forward;穂:Sprouting",
-    "ま|真:Truth;舞:Graceful dance;万:Infinite possibilities;満:Fullness",
-    "み|美:Beauty;海:Vastness;実:Fruitfulness;光:Light",
-    "む|夢:Dream;武:Strength;睦:Close, friendly;無限:Limitless (2 kanji)",
-    "め|芽:Growth;明:Bright;恵:Blessing;愛:Beloved",
-    "も|望:Hope;萌:Budding;茂:Prosperity;模:Model",
-    "や|弥:Ever more widely;陽:Sun;也:Archaic connector;八:Widening prosperity",
-    "ゆ|結:Bond;勇:Courage;悠:Leisurely;友:Friendship",
-    "よ|誉:Honor;陽:Bright sun;代:Generation;洋:Ocean, the world",
-    "ら|楽:Joy;蘭:Orchid, elegance;良:Goodness;羅:Wide network",
-    "り|凜:Dignified;莉:Jasmine;里:Hometown;理:Logic",
-    "る|瑠:Lapis lazuli;流:Flow;類:One of a kind;留:Stays in the heart",
-    "れ|礼:Courtesy;蓮:Pure lotus;怜:Wise;麗:Splendid",
-    "ろ|路:Road;露:Morning dew;朗:Cheerful;呂:Rhythm",
-    "わ|和:Harmony;輪:Circle;羽:Wing;若:Youthful",
-    "ん|運:Good fortune;恩:Gratitude;音:Resonance",
+    "あ|亜:Next / Asia;有:Exist / Possess;逢:Encounter;吾:Self / Ego;阿:Flatter / High ground",
+    "あい|愛:Love / Affection;藍:Indigo / Deep Blue;相:Together / Mutual",
+    "い|依:Rely / Trust;唯:Unique / Sole;衣:Gown / Garment;維:Tie / Maintain;意:Mind / Will",
+    "う|羽:Wing / Flight;佑:Help / Assist;宇宙:Universe / Vast;海:Sea / Ocean",
+    "え|恵:Blessing / Grace;瑛:Crystal / Pure;絵:Picture / Art;栄:Prosper / Bloom",
+    "えい|英:Heroic / Brilliant;詠:Poetry / Recite;永:Eternal / Forever;鋭:Sharp / Keen",
+    "お|桜:Cherry Blossom;央:Center / Leader;緒:Thread / Beginning;音:Sound / Music",
+    "か|華:Splendor / Elegant;嘉:Joy / Excellent;花:Flower / Bloom;夏:Summer / Energy;歌:Song / Harmony",
+    "が|雅:Elegant / Refined;賀:Congratulate / Joy",
+    "かい|海:Ocean / Sea;快:Pleasant / Clear;開:Open / Pioneer;魁:Pioneer / Leader",
+    "き|輝:Radiance / Shine;希:Hope / Rare;樹:Tree / Growth;貴:Noble / Precious;季:Season / Nature",
+    "ぎ|義:Justice / Loyalty;銀:Silver / Bright",
+    "く|久:Eternal / Stable;玖:Black Jewel / Nine;駆:Gallop / Speed",
+    "ぐ|弘:Vast / Broad;具:Tool / Possess",
+    "け|恵:Grace / Blessing;佳:Excellent / Fine;景:View / Scenery",
+    "げ|玄:Mysterious / Deep;元気:Energy / Vital",
+    "けい|慶:Celebration / Luck;啓:Enlighten / Open;圭:Jewel / Refined",
+    "こ|心:Heart / Soul;琥:Amber / Jewel;湖:Lake / Serene;虎:Tiger / Strong",
+    "ご|悟:Enlighten / Wise;剛:Strong / Rigid",
+    "さ|彩:Color / Vivid;咲:Bloom / Smile;紗:Silk / Elegant;佐:Assist / Help",
+    "ざ|座:Gathering / Seat;財:Wealth / Asset",
+    "し|至:Supreme / Reach;志:Ambition / Will;詩:Poem / Verse;史:History / Record",
+    "じ|慈:Compassion / Mercy;治:Govern / Peace;路:Path / Road",
+    "しん|真:Truth / Pure;信:Trust / Faith;進:Advance / Move;新:New / Fresh",
+    "す|寿:Longevity / Luck;翠:Emerald / Green;澄:Clear / Pure",
+    "ず|図:Design / Plan;瑞:Auspicious / Joy",
+    "せ|世:World / Era;成:Success / Become;誠:Sincerity / Truth",
+    "ぜ|是:Correct / Right;善:Good / Virtue",
+    "せい|星:Star / Hope;聖:Holy / Pure;静:Calm / Quiet;清:Pure / Clean",
+    "そ|爽:Refreshing / Clear;想:Vision / Care;奏:Play / Harmony;礎:Foundation / Base",
+    "ぞ|創造:Create / Build;蔵:Warehouse / Store",
+    "た|多:Abundant / Multi;汰:Selective / Great;太:Grand / Bold;瑞:Auspicious / Fresh",
+    "だ|大地:Great Earth;暖:Warmth / Kind",
+    "だい|大:Great / Big;台:Platform / Support;第:Order / Step;泰:Peace / Calm",
+    "ち|智:Wisdom / Intellect;知:Knowledge / Awareness;千:Thousand / Infinite;地:Earth / Foundation",
+    "ぢ|路:Path / Way;持:Hold / Maintain",
+    "つ|都:Capital / Elegant;通:Master / Flow;紬:Silk / Strong;月:Moon / Serene",
+    "づ|絆:Bond / Tie;続:Continue / Lasting",
+    "て|天:Heaven / Sky;照:Shine / Light;帝:Emperor / Noble;輝:Shine / Radiance",
+    "で|出:Depart / New start;伝:Legend / Message",
+    "でい|泥:Mud / Deep Earth;寧:Serene / Calm;出意:Expression of Will",
+    "と|翔:Soar / Fly high;斗:Big Dipper / Star;登:Climb / Ascend;永久:Eternal / Forever",
+    "ど|道:Way / Journey;努:Effort / Diligent;土:Earth / Soil",
+    "な|那:Elegant / Noble;奈:Guidance / Fruit;凪:Calm / Stillness;菜:Greens / Nature",
+    "に|仁:Benevolence / Kind;虹:Rainbow / Bridge;日:Sun / Day;二:Two / Together",
+    "ぬ|温:Warmth / Kind;主:Master / Soul;布:Spread / Reach",
+    "ね|音:Sound / Music;寧:Serene / Peaceful;嶺:Peak / Summit;根:Root / Soul",
+    "の|乃:From / Belonging;望:Hope / Vision;暖:Warmth / Kind;野:Wild / Open",
+    "は|陽:Sunshine / Positive;波:Wave / Flow;葉:Leaf / Vitality;羽:Wing / Feather",
+    "ば|場:Place / Occasion;万:Ten thousand / All",
+    "ぱ|晴:Bright / Clear;波:Sparkle / Ripple",
+    "ひ|飛:Flight / Freedom;緋:Scarlet / Passion;日:Sun / Light;灯:Lamp / Light",
+    "び|美:Beauty / Splendid;備:Prepare / Equip",
+    "ぴ|光:Sparkle / Flash;灯:Tiny light / Spark",
+    "ふ|楓:Maple / Season;風:Wind / Style;譜:Music / Harmony;芙:Lotus / Elegant",
+    "ぶ|武:Warrior / Strong;舞:Dance / Flutter",
+    "ぷ|純:Pure / Simple;風:Puff / Breeze",
+    "へ|平:Peace / Calm;碧:Jasper / Blue-Green;経:Path / Experience;兵:Soldier / Strong",
+    "べ|紅:Crimson / Deep Red;勉:Diligent / Study",
+    "ぺ|平:Level / Peaceful;並:Row / Together",
+    "ほ|帆:Sail / Journey;宝:Treasure / Precious;穂:Abundance / Harvest;歩:Walk / Progress",
+    "ぼ|望:Expectation / Longing;母:Origin / Source",
+    "ぽ|歩:Step / Progress;穂:Sprout / Growth",
+    "ま|真:Truth / Pure;舞:Dance / Elegance;万:Infinite / Multi;満:Full / Complete",
+    "み|美:Beauty / Grace;海:Sea / Vast;実:Fruit / Truth;光:Light / Radiance",
+    "む|夢:Dream / Vision;武:Warrior / Strong;睦:Friendly / Kind;無限:Infinite",
+    "め|芽:Sprout / Growth;明:Bright / Intelligent;恵:Blessing / Grace;愛:Beloved",
+    "も|望:Expectation / Look;萌:Bud / Cute;茂:Flourish / Prosper;模:Model / Pattern",
+    "や|弥:Universal / Full;陽:Sun / Warmth;也:Classic / To be;八:Eight / Wealth",
+    "ゆ|結:Connect / Tie;勇:Brave / Courage;悠:Relaxed / Eternal;友:Friend / Amity",
+    "よ|誉:Honor / Glory;陽:Positive / Bright;代:Generation / Era;洋:Ocean / Global",
+    "ら|楽:Joy / Music;蘭:Orchid / Elegant;良:Good / Excellence;羅:Network / Silk",
+    "り|凜:Dignified / Cool;莉:Jasmine / Fragrant;里:Village / Home;理:Logic / Reason",
+    "る|瑠:Lapis Lazuli;流:Flow / Style;類:Type / Unique;留:Remain / Treasure",
+    "れ|礼:Respect / Courtesy;蓮:Lotus / Pure;怜:Clever / Sharp;麗:Splendid / Radiant",
+    "ろ|路:Path / Way;露:Dew / Pure;朗:Bright / Clear;呂:Rhythm / Note",
+    "わ|和:Harmony / Peace;輪:Circle / Wheel;羽:Wing / Feather;若:Young / Fresh",
+    "ん|運:Luck / Fortune;恩:Gratitude / Favor;音:Sound / Resonance",
   ];
   var DATA = {};
   Object.keys(REAL).forEach(function (key) { DATA[key] = REAL[key]; });
@@ -444,6 +414,8 @@ header .demo {
       return { k: p[0], m: p.slice(1).join(":") };
     });
   });
+  // Page where each sound starts in the booklet (from its table of contents).
+  var PAGES = {"あ": "1", "あい": "2", "い": "2", "う": "3", "え": "4", "えい": "5", "お": "6", "か": "7", "が": "8", "かい": "8", "き": "9", "ぎ": "10", "く": "11", "ぐ": "11", "け": "12", "げ": "13", "けい": "13", "こ": "14", "ご": "15", "さ": "15", "ざ": "16", "し": "17", "じ": "18", "しん": "18", "す": "19", "ず": "20", "せ": "20–21", "ぜ": "21", "せい": "22", "そ": "23", "ぞ": "24", "た": "24", "だ": "25", "だい": "26", "ち": "27", "ぢ": "28", "つ": "28", "づ": "29", "て": "30", "で": "31", "でい": "31", "と": "32", "ど": "33", "な": "33", "に": "34", "ぬ": "35", "ね": "36", "の": "37", "は": "38", "ば": "39", "ぱ": "39", "ひ": "40", "び": "41", "ぴ": "41", "ふ": "42", "ぶ": "43", "ぷ": "43", "へ": "44", "べ": "45", "ぺ": "45", "ほ": "46", "ぼ": "47", "ぽ": "47", "ま": "48", "み": "49", "む": "50", "め": "51", "も": "52", "や": "53", "ゆ": "54", "よ": "55", "ら": "56", "り": "57", "る": "58", "れ": "59", "ろ": "60", "わ": "61", "ん": "62"};
   function romOf(kana) {
     return Array.from(kana).map(function (c) { return REV[c] || ""; }).join("");
   }
@@ -558,7 +530,8 @@ header .demo {
       sec.className = "slot";
       var snd = document.createElement("div");
       snd.className = "sound";
-      snd.innerHTML = '<span class="kana" lang="ja">' + s.kana + '</span><span class="rom">' + romOf(s.kana) + "</span>";
+      snd.innerHTML = '<span class="kana" lang="ja">' + s.kana + '</span><span class="rom">' + romOf(s.kana) + "</span>" +
+        (PAGES[s.base] ? '<span class="pg">p. ' + PAGES[s.base] + "</span>" : "");
       if (s.base !== s.kana) {
         var n = document.createElement("span");
         n.className = "note";
@@ -585,9 +558,7 @@ header .demo {
         b.type = "button";
         b.className = "cand";
         b.setAttribute("aria-pressed", String(sel[i] === j));
-        if (c.d) b.title = c.d;
-        b.innerHTML = '<span class="k" lang="ja">' + c.k + '</span><span class="m">' + c.m + "</span>" +
-          (c.s ? '<span class="m smp">sample</span>' : "");
+        b.innerHTML = '<span class="k" lang="ja">' + c.k + '</span><span class="m">' + c.m + "</span>";
         b.addEventListener("click", function () {
           sel[i] = sel[i] === j ? null : j;
           Array.prototype.forEach.call(grp.children, function (x, n2) { x.setAttribute("aria-pressed", String(sel[i] === n2)); });
@@ -703,7 +674,7 @@ header .demo {
       var row = document.createElement("div");
       row.className = "detail";
       row.innerHTML = '<div class="k" lang="ja">' + c.k + '</div><div><div class="m">' + c.m +
-        '</div>' + (c.d ? '<div class="dd">' + c.d + "</div>" : "") + '<div class="r"><span lang="ja">' + c.kana + " " + romOf(c.kana) +
+        '</div><div class="r"><span lang="ja">' + c.kana + " " + romOf(c.kana) +
         '</span></div></div>';
       d.appendChild(row);
     });

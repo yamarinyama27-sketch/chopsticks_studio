@@ -1,5 +1,5 @@
 // Offline cache for the name picker. Bump VERSION when index.html changes.
-var VERSION = "hashi-v7";
+var VERSION = "hashi-v11";
 var CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {
